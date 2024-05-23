@@ -3,6 +3,7 @@ import { GrInstagram } from "react-icons/gr";
 import { FaWhatsapp } from "react-icons/fa6";
 import { FaTiktok } from "react-icons/fa";
 import { FaYoutube } from "react-icons/fa";
+import { Link as ScrollLink } from "react-scroll";
 
 const Footer = () => {
   return (
@@ -11,13 +12,12 @@ const Footer = () => {
         <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
           <div className="md:flex md:justify-between">
             <div className="mb-10 md:mb-0">
-              <a href="https://flowbite.com/" className="flex items-center">
-                <img
-                  src="./assets/Black.jpg"
-                  className="h-12 me-3 ms-5"
-                  alt="FlowBite Logo"
-                />
-              </a>
+              <img
+                src="./assets/Black.jpg"
+                className="h-12 me-3 ms-5"
+                alt="FlowBite Logo"
+              />
+
               <div className="flex flex-col ms-5 sm:justify-center sm:mt-0 gap-3 me-10">
                 <p className="flex font-oswald mt-5 text-white gap-2">
                   <GrInstagram size={20} color="#FFFF" className="mt-0.5" />
@@ -39,74 +39,90 @@ const Footer = () => {
             </div>
             <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3 me-5">
               <div>
-                <h2 className="mb-6 mt-2 me-20 font-oswald text-sm text-lg text-gray-900 uppercase dark:text-white">
+                <h2 className="mb-6 mt-2 me-20 font-oswald text-sm text-lg text-gray-500 uppercase dark:text-white">
                   OUR LOCATION
                 </h2>
                 <ul className="text-gray-500 dark:text-gray-400 font-medium">
-                  <li className="mb-4">
-                    <a
-                      href="https://flowbite.com/"
-                      className="hover:underline font-oswald"
-                    >
-                      Jakarta
-                    </a>
-                  </li>
-                  <li className="mb-4">
-                    <a
-                      href="https://tailwindcss.com/"
-                      className="hover:underline font-oswald"
-                    >
-                      Bogor
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="https://tailwindcss.com/"
-                      className="hover:underline font-oswald"
-                    >
-                      Bandung
-                    </a>
-                  </li>
+                  <ScrollLink to="location" smooth={false}>
+                    <li className="mb-4">
+                      <a
+                        href="https://flowbite.com/"
+                        className="hover:underline font-oswald"
+                      >
+                        Jakarta
+                      </a>
+                    </li>
+                    <li className="mb-4">
+                      <a
+                        href="https://tailwindcss.com/"
+                        className="hover:underline font-oswald"
+                      >
+                        Bogor
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="https://tailwindcss.com/"
+                        className="hover:underline font-oswald"
+                      >
+                        Bandung
+                      </a>
+                    </li>
+                  </ScrollLink>
                 </ul>
               </div>
               <div>
-                <h2 className="mb-6 text-sm font-oswald text-lg mt-2 text-gray-900 uppercase dark:text-white">
+                <h2 className="mb-6 text-sm font-oswald text-lg mt-2 text-gray-500 uppercase dark:text-white">
                   PARTNERSHIP
                 </h2>
                 <ul className="text-gray-500 dark:text-gray-400 font-medium">
-                  <li className="mb-4">
-                    <a
-                      href="https://github.com/themesberg/flowbite"
-                      className="hover:underline font-oswald"
-                    >
-                      Cibugary
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="https://discord.gg/4eeurUVvTy"
-                      className="hover:underline font-oswald"
-                    >
-                      Delima
-                    </a>
-                  </li>
+                  <ScrollLink to="partnership" smooth={false}>
+                    <li className="mb-4">
+                      <a
+                        href="https://github.com/themesberg/flowbite"
+                        className="hover:underline font-oswald"
+                      >
+                        Cibugary
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="https://discord.gg/4eeurUVvTy"
+                        className="hover:underline font-oswald"
+                      >
+                        Delima
+                      </a>
+                    </li>
+                  </ScrollLink>
                 </ul>
               </div>
               <div>
-                <h2 className="mb-6 text-sm font-oswald text-lg mt-2 text-gray-900 uppercase dark:text-white">
+                <h2 className="mb-6 text-sm font-oswald text-lg mt-2 text-gray-500 uppercase dark:text-white">
                   OUR MENU
                 </h2>
                 <ul className="text-gray-500 dark:text-gray-400 font-medium">
-                  <li className="mb-4">
-                    <a href="#" className="hover:underline font-oswald">
-                      Best Seller
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:underline font-oswald">
-                      New Menu
-                    </a>
-                  </li>
+                  <ScrollLink
+                    to="foodmenu"
+                    smooth={false}
+                    className="text-base font-oswald"
+                  >
+                    <li className="mb-4">
+                      <a href="#" className="hover:underline">
+                        Food Menu
+                      </a>
+                    </li>
+                  </ScrollLink>
+                  <ScrollLink
+                    to="drinkmenu"
+                    smooth={false}
+                    className="text-base font-oswald"
+                  >
+                    <li>
+                      <a href="#" className="hover:underline">
+                        Drink Menu
+                      </a>
+                    </li>
+                  </ScrollLink>
                 </ul>
               </div>
             </div>

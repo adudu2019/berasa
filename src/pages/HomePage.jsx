@@ -25,8 +25,9 @@ import LoadingBar from "../components/LoadingBar";
 const HomePage = () => {
   const [data, setData] = useState([]);
   const [getProduct, setGetProduct] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPageDrink, setCurrentPageDrink] = useState(1);
   const [productsPerPage] = useState(8);
+  const [currentPageFood, setCurrentPageFood] = useState(1);
   const [loading, setLoading] = useState(true);
   const array = [1, 2, 3, 4, 5, 6, 7];
   const truncate = (str, maxLength, trunct) => {
@@ -38,15 +39,23 @@ const HomePage = () => {
   };
 
   // Menghitung indeks produk untuk halaman saat ini
-  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfLastProduct = currentPageDrink * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = getProduct.slice(
     indexOfFirstProduct,
     indexOfLastProduct
   );
 
+  const indexOfLastProductFood = currentPageFood * productsPerPage;
+  const indexOfFirstProductFood = indexOfLastProductFood - productsPerPage;
+  const currentProductFood = data.slice(
+    indexOfFirstProductFood,
+    indexOfLastProductFood
+  );
+
   // Mengubah halaman
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginateFood = (pageNumber) => setCurrentPageFood(pageNumber);
+  const paginateDrink = (pageNumber) => setCurrentPageDrink(pageNumber);
 
   function getImage(filename) {
     const { data } = supabase.storage
@@ -82,6 +91,7 @@ const HomePage = () => {
     }
   };
 
+  console.log(data);
   useEffect(() => {
     const makanan = async () => {
       const res = await axios.get(`${import.meta.env.VITE_BASE_URL}`, {
@@ -185,11 +195,10 @@ const HomePage = () => {
       <section id="foodmenu" className="items-center">
         <a href="#foodmenu"></a>
         <h2 className="font-oswald text-center text-xl mt-24">FOOD MENU</h2>
-
-        <div className="flex items-center justify-center px-5 gap-3 mt-5 mb-5 flex-wrap">
-          {data.slice(0, 8).map((p) => (
-            <Link to={`/detail/${p.id}`}>
-              <div className="card rounded-xl card-compact w-64 bg-base-100 shadow-xl hover:scale-105 transition-all">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ms-10 items-center justify-center gap-3 mt-8 mb-5">
+          {currentProductFood.slice(0, 8).map((p) => (
+            <Link to={`/detailfood/${p.id}`} key={p.id}>
+              <div className="card rounded-xl mt-5 card-compact w-full sm:w-64 bg-base-100 shadow-xl hover:scale-105 transition-all">
                 <figure>
                   <img
                     className="w-full object-cover h-32"
@@ -208,10 +217,9 @@ const HomePage = () => {
                   <p>If a dog chews shoes whose shoes does he choose?</p>
                   <div className="flex mt-2">
                     <button className="bg-black border-white px-1.5 py-1 rounded-md text-white">
-                      {" "}
-                      pesan sekarang{" "}
+                      pesan sekarang
                     </button>
-                    <h2 className="mt-1 ms-20">$22</h2>
+                    <h2 className="mt-1 ms-auto">$22</h2>
                   </div>
                 </div>
               </div>
@@ -223,9 +231,9 @@ const HomePage = () => {
             <button
               key={i}
               className={`join-item btn ${
-                currentPage === i + 1 ? "btn-active" : ""
+                currentPageFood === i + 1 ? "btn-active" : ""
               }`}
-              onClick={() => paginate(i + 1)}
+              onClick={() => paginateFood(i + 1)}
             >
               {i + 1}
             </button>
@@ -233,19 +241,18 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* SECTION DRINK MENU */}
       <section id="drinkmenu">
         <a href="#drinkmenu"></a>
         <h2 className="font-oswald text-center text-xl mt-24">DRINK MENU</h2>
-        <div className="flex items-center justify-center gap-3 mt-5 mb-5 flex-wrap">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ms-10 me-10 items-center justify-center gap-3 mt-8 mb-5">
           {currentProducts.slice(0, 8).map((q) => (
-            <Link to={`/detail/${q.id}`}>
-              <div className="card rounded-xl card-compact w-64 bg-base-100 shadow-xl hover:scale-105 transition-all">
+            <Link to={`/detaildrink/${q.id}`} key={q.id}>
+              <div className="card rounded-xl card-compact w-full sm:w-64 mt-5 bg-base-100 shadow-xl hover:scale-105 transition-all">
                 <figure>
                   <img
                     src={getImage(q.image)}
                     alt="Shoes"
-                    className="w-full h-36 object-cover "
+                    className="w-full h-36 object-cover"
                   />
                 </figure>
                 <div className="card-body gap-0">
@@ -259,26 +266,24 @@ const HomePage = () => {
                   <p>{q.description}</p>
                   <div className="flex mt-2">
                     <button className="bg-black border-white px-1.5 py-1 rounded-md text-white">
-                      {" "}
-                      pesan sekarang{" "}
+                      pesan sekarang
                     </button>
-                    <h2 className="mt-1 ms-20">$22</h2>
+                    <h2 className="mt-1 ms-auto">$22</h2>
                   </div>
                 </div>
               </div>
             </Link>
           ))}
         </div>
-        {/* pagination */}
         <div className="join items-center justify-center flex mt-10">
           {[...Array(Math.ceil(getProduct.length / productsPerPage))].map(
             (_, i) => (
               <button
                 key={i}
                 className={`join-item btn ${
-                  currentPage === i + 1 ? "btn-active" : ""
+                  currentPageDrink === i + 1 ? "btn-active" : ""
                 }`}
-                onClick={() => paginate(i + 1)}
+                onClick={() => paginateDrink(i + 1)}
               >
                 {i + 1}
               </button>
@@ -335,7 +340,7 @@ const HomePage = () => {
             </div>
           </Link>
 
-          <Link to={"/Comingsoon"} class="w-96 md:w-1/3">
+          <Link to={"/comingsoon"} class="w-96 md:w-1/3">
             <div class="card rounded-none image-full hover:scale-110 transition-all">
               <figure>
                 <img

@@ -7,12 +7,23 @@ import { useAuth } from "../auth/AuthProvider";
 
 const Cart = () => {
   const [getCart, setGetCart] = useState([]);
-
   const [isLoading, setIsLoading] = useState(true);
-
   const [totalPrice, setTotalPrice] = useState(0);
-
+  const [checkedItems, setCheckedItems] = useState([]);
   const navigate = useNavigate();
+  const [grandPrice, setGrandPrice] = useState(0);
+  const [jumlah, setJumlah] = useState(0);
+  const { user } = useAuth();
+
+  const tambahJumlah = () => {
+    setJumlah(jumlah + 1);
+  };
+
+  const kurangJumlah = () => {
+    if (jumlah > 1) {
+      setJumlah(jumlah - 1);
+    }
+  };
 
   const hapusSemuaKeranjang = async () => {
     try {
@@ -31,7 +42,9 @@ const Cart = () => {
       .select("full_name")
       .eq("id", user.id);
 
-    let getNamaProduk = getCart.map((produk) => produk.name_product);
+    let getNamaProduk = getCart
+      .filter((produk) => checkedItems.includes(produk.id))
+      .map((produk) => produk.name_product);
 
     const { data } = await supabase
       .from("pesanan")
@@ -40,6 +53,7 @@ const Cart = () => {
         nama_pemesan: getName[0].full_name,
         nama_produk: getNamaProduk,
         total_harga: totalPrice,
+        jumlah_product: jumlah,
       })
       .select();
 
@@ -58,14 +72,27 @@ const Cart = () => {
     setGetCart(data);
   }
 
-  async function calculateTotalPrice() {
-    let total = 0;
+  useEffect(() => {
+    fetchCart();
+    setIsLoading(false);
+  }, []);
 
-    getCart.forEach((cart) => {
-      total += cart.price;
-    });
+  useEffect(() => {
+    calculateTotalPrice();
+  }, [checkedItems]);
+
+  const calculateTotalPrice = () => {
+    const total = getCart
+      .filter((item) => checkedItems.includes(item.id))
+      .reduce((sum, item) => sum + item.price * item.jumlah_product, 0);
     setTotalPrice(total);
-  }
+  };
+
+  const handleCheck = (id) => {
+    setCheckedItems((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
 
   const image = (filename) => {
     console.log(filename);
@@ -82,40 +109,6 @@ const Cart = () => {
     }
   };
 
-  const tombolTambah = async (cartId, currentQuantity) => {
-    const newQuantity = currentQuantity + 1;
-    const { data, error } = await supabase
-      .from("pesanan")
-      .update({ jumlah_pesanan: newQuantity })
-      .eq("id", cartId);
-
-    fetchCart();
-
-    if (error) {
-      console.log(error);
-    }
-    if (data) {
-      console.log(data);
-    }
-  };
-
-  const tombolKurang = async (cartId, currentQuantity) => {
-    const newQuantity = currentQuantity - 1;
-    const { data, error } = await supabase
-      .from("pesanan")
-      .update({ jumlah_pesanan: newQuantity })
-      .eq("id", cartId);
-
-    fetchCart();
-
-    if (error) {
-      console.log(error);
-    }
-    if (data) {
-      console.log(data);
-    }
-  };
-
   async function deleteCart(cartId) {
     const { data, error } = await supabase
       .from("keranjang")
@@ -129,27 +122,10 @@ const Cart = () => {
     }
   }
 
-  const { user } = useAuth();
-
-  const getAllKeranjang = async () => {
-    const { data } = await supabase
-      .from("keranjang")
-      .select("*")
-      .eq("id_user", user.id);
-
-    console.log(data);
-  };
-
-  useEffect(() => {
-    calculateTotalPrice();
-    getAllKeranjang();
-    fetchCart();
-    setIsLoading(false);
-  }, [getCart]);
-
   if (isLoading) {
-    <LoadingBar />;
+    return <LoadingBar />;
   }
+
   return (
     <>
       <h2 className="text-center text-2xl font-oswald text-black mt-10">
@@ -161,7 +137,12 @@ const Cart = () => {
             key={g.id}
             className="card py-3 border-y rounded-none flex flex-col md:flex-row w-full h-full items-center"
           >
-            <input type="checkbox" className="checkbox mx-3 ms-10 " />
+            <input
+              type="checkbox"
+              className="checkbox mx-3 ms-10"
+              checked={checkedItems.includes(g.id)}
+              onChange={() => handleCheck(g.id)}
+            />
             <div className="flex items-center">
               <img
                 className="object-cover h-32 w-32 m-3"
@@ -173,19 +154,24 @@ const Cart = () => {
               <h1 className="mt-3 md:mt-0 ms-0 md:ms-7 md:w-80 text-black">
                 {g.name_product}
               </h1>
-
               <h2 className="ms-3 md:ms-20 text-black">
-                IDR {toRupiah(g.price)}
+                IDR {toRupiah(g.price * g.jumlah_product)}
               </h2>
             </div>
             <div className="flex items-center md:ms-20">
-              <div className="flex justify-between gap-2 mt-3 md:mt-0  md:ms-0">
-                <button className="btn btn-outline ">-</button>
+              <div className="flex justify-between gap-2 mt-3 md:mt-0 md:ms-0">
+                <button className="btn btn-outline" onClick={kurangJumlah}>
+                  -
+                </button>
                 <input
                   type="text"
-                  className="w-14 rounded-lg border text-center border-black"
+                  value={g.jumlah_product}
+                  readOnly
+                  className="w-12 rounded-lg border border-black text-center bg-transparent"
                 />
-                <button className="btn btn-outline ">+</button>
+                <button className="btn btn-outline" onClick={tambahJumlah}>
+                  +
+                </button>
               </div>
             </div>
             <h1
@@ -197,15 +183,20 @@ const Cart = () => {
           </div>
         ))}
       </div>
-
-      <div className="card border-t rounded-none flex md:flex md:flex-row justify-between items-center w-full h-5 mt-36 p-5 ">
+      <div className="card border-t rounded-none flex md:flex md:flex-row justify-between items-center w-full h-5 mt-36 p-5">
         <div className="flex items-center mt-4">
-          <input type="checkbox" className="checkbox mx-3 " />
-          <h2 className=" text-black">Pilih Semua Produk()</h2>
+          <input
+            type="checkbox"
+            className="checkbox mx-3"
+            onChange={(e) =>
+              setCheckedItems(
+                e.target.checked ? getCart.map((item) => item.id) : []
+              )
+            }
+          />
+          <h2 className="text-black">Pilih Semua Produk()</h2>
         </div>
-        <h2 className=" text-black mt-4">
-          Total(1 Menu) : {toRupiah(totalPrice)}
-        </h2>
+        <h2 className="text-black mt-4">Total : {toRupiah(totalPrice)}</h2>
         <form onSubmit={handlePesanan} className="">
           <button
             className="btn mt-8 btn-neutral border px-5 py-2 text-white hover:bg-slate-400"

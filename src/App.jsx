@@ -11,13 +11,15 @@ import AuthProvider from "./auth/AuthProvider";
 import Profile from "./pages/Profile";
 import AuthAdmin from "./auth/AuthAdmin";
 import Admin from "./admin/Admin";
-import Detail from "./pages/Detail";
+
 import Insert from "./admin/Insert";
 import Header from "./components/Header";
 import Cart from "./pages/Cart";
 import Update from "./admin/Update";
 import CustomerOrder from "./pages/CustomerOrder";
 import History from "./pages/History";
+import DetailDrink from "./pages/DetailDrink";
+import DetailFood from "./pages/DetailFood";
 
 function App() {
   const [user, setUser] = useState();
@@ -35,11 +37,12 @@ function App() {
     <BerasaProvider value={{ user }}>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/Profile" element={<Profile />} />
-        <Route path="/Register" element={<Register />} />
-        <Route path="/Login" element={<Login />} />
-        <Route path="/Comingsoon" element={<Comingsoon />} />
-        <Route path="/detail/:id" element={<Detail />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/comingsoon" element={<Comingsoon />} />
+        <Route path="/detaildrink/:id" element={<DetailDrink />} />
+        <Route path="/detailfood/:id" element={<DetailFood />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/orderan" element={<CustomerOrder />} />
         <Route path="/history" element={<History />} />

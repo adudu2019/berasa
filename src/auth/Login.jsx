@@ -24,6 +24,7 @@ const Login = () => {
 
       if (user && session) {
         window.location.href = "/";
+        alert("Berhasil Login Silahkan Masuk");
       }
     } catch (error) {
       console.log(error);
@@ -92,16 +93,6 @@ const Login = () => {
             </form>
 
             <hr className="my-6 border-gray-300 w-full" />
-
-            <button
-              type="button"
-              className="w-full block bg-white hover:bg-gray-100 focus:bg-gray-100 text-gray-900 font-semibold rounded-lg px-4 py-3 border border-gray-300"
-            >
-              <div className="flex items-center justify-center">
-                <i className="fa-brands fa-google"></i>
-                <span className="ml-4">Log In with Google</span>
-              </div>
-            </button>
 
             <p className="mt-8">
               Need an account?{" "}

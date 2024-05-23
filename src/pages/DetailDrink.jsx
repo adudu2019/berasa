@@ -1,27 +1,35 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
 import { supabase } from "../CreateClient";
 import toRupiah from "@develoka/angka-rupiah-js";
 import LoadingBar from "../components/LoadingBar";
 
-const Detail = () => {
+const DetailDrink = () => {
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  console.log(data.product_name);
-
   const { user } = useAuth();
+  const [jumlah, setJumlah] = useState(0);
 
-  function getImage(filename) {
+  const tambahJumlah = () => setJumlah(jumlah + 1);
+  const kurangJumlah = () => {
+    if (jumlah > 0) {
+      setJumlah(jumlah - 1);
+    }
+  };
+
+  const getImage = (filename) => {
     const { data } = supabase.storage
       .from("image_product")
       .getPublicUrl("products/" + filename);
     return data.publicUrl;
-  }
+  };
 
   const addCart = async (id) => {
+    if (user == null) {
+      window.location.replace("/login");
+    }
     const { data } = await supabase.from("product").select("*").eq("id", id);
 
     try {
@@ -35,12 +43,13 @@ const Detail = () => {
               name_product: data[0].product_name,
               price: data[0].price,
               image: data[0].image,
+              jumlah_product: jumlah,
             },
           ])
           .select();
 
         if (!error) {
-          alert("produk di tambah ke keranjang");
+          alert("Produk ditambahkan ke keranjang");
         }
       }
     } catch (error) {
@@ -66,63 +75,61 @@ const Detail = () => {
 
   return (
     <>
-      <Header />
-      <div className="flex items-center justify-center ms-32">
+      <h2 className="text-center text-2xl font-oswald pt-10">DETAIL DRINK</h2>
+      <div className="flex flex-col md:flex-row h-full md:h-screen md:ms-32 p-5">
         <img
           src={getImage(data.image)}
-          className="object-cover w-96 md:h-96 shadow-2xl h-80 md:m-14 p-5"
+          className="object-cover w-full md:w-96 md:h-96 shadow-2xl h-80 md:m-14 mb-5 md:mb-0"
+          alt={data.product_name}
         />
-        <div className="md:w-1/2 me-10">
-          <h2 className="text-black text-2xl font-oswald">
-            {data.product_name}
-          </h2>
-          <h2 className="text-black text-sm font-light">{data.description}</h2>
+        <div className="w-full md:w-1/2 md:me-10 mt-5 md:mt-20">
+          <h2 className="text-2xl font-oswald">{data.product_name}</h2>
+          <h2 className="text-sm font-light">{data.description}</h2>
           <div className="flex flex-wrap mt-1">
-            <h2 className="  text-black mt-3 text-2xl font-oswald font-semibold">
+            <h2 className="mt-3 text-2xl font-oswald font-semibold">
               IDR {toRupiah(data.price)}
             </h2>
-            <s className="mt-3 md:ms-1 font-oswald text-1xl font-semibold">
-              IDR 1.500.000.00
-            </s>
-            <h2 className="text-red-400 mt-3 md:ms-1 text-sm font-oswald font-semibold">
-              30%.OFF
+            <s className="mt-3 ms-1 text-xl font-medium">IDR Rp25.000.00</s>
+            <h2 className="text-red-400 mt-3 ms-1 text-sm font-oswald font-semibold">
+              30% OFF
             </h2>
           </div>
 
-          <h2 className="mt-3 text-1xl font-semibold">Size</h2>
+          <h2 className="mt-3 text-xl font-semibold">Size</h2>
           <div className="gap-1 flex flex-wrap mt-3">
-            <div className="text-black text-xs p-1 rounded-md border border-black hover:bg-slate-500">
+            <div className="text-xs p-2 rounded-md border border-black hover:bg-slate-500 cursor-pointer">
               Small
             </div>
-            <div className="text-black text-xs p-1 rounded-md border border-black hover:bg-slate-500">
+            <div className="text-xs p-2 rounded-md border border-black hover:bg-slate-500 cursor-pointer">
               Medium
             </div>
-            <div className="text-black text-xs p-1 rounded-md border border-black hover:bg-slate-500">
+            <div className="text-xs p-2 rounded-md border border-black hover:bg-slate-500 cursor-pointer">
               Large
             </div>
           </div>
 
           <div className="flex items-center mt-5">
-            <div className="flex justify-between gap-2 mt-3 md:mt-0  md:ms-0">
-              <button className="btn btn-outline ">-</button>
+            <div className="flex justify-between gap-2 mt-3 md:mt-0">
+              <button className="btn btn-outline" onClick={kurangJumlah}>
+                -
+              </button>
               <input
                 type="text"
-                placeholder="1"
+                value={jumlah}
+                readOnly
                 className="w-12 rounded-lg border border-black text-center bg-transparent"
               />
-              <button className="btn btn-outline ">+</button>
+              <button className="btn btn-outline" onClick={tambahJumlah}>
+                +
+              </button>
             </div>
           </div>
 
           <button
             onClick={() => addCart(data.id)}
-            className="border border-black mt-6 p-4 w-44 text-xs font-oswald  text-black hover:bg-slate-500"
+            className="border border-black mt-6 p-4 w-full md:w-96 text-xs font-oswald hover:bg-slate-500"
           >
             ADD TO CART
-          </button>
-
-          <button className="ms-3 border border-black mt-6 p-4 w-44 text-xs font-oswald text-black hover:bg-slate-500">
-            BUY NOW
           </button>
         </div>
       </div>
@@ -130,4 +137,4 @@ const Detail = () => {
   );
 };
 
-export default Detail;
+export default DetailDrink;

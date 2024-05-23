@@ -21,6 +21,7 @@ const Register = () => {
       password: passRef.current.value,
     });
     if (!error) {
+      alert("Berhasil Daftar Silahkan Confirm Email dan Login Kembali");
       navigate("/");
     } else {
       alert("Registrasi gagal");
@@ -99,6 +100,8 @@ const Register = () => {
                 </a>
               </div>
 
+              <hr className="my-6 border-gray-300 w-full" />
+
               <button
                 type="submit"
                 className="w-full block bg-black hover:bg-slate-500 focus:bg-indigo-400 text-white font-semibold rounded-lg
@@ -107,18 +110,6 @@ const Register = () => {
                 Register
               </button>
             </form>
-
-            <hr className="my-6 border-gray-300 w-full" />
-
-            <button
-              type="button"
-              className="w-full block bg-white hover:bg-gray-100 focus:bg-gray-100 text-gray-900 font-semibold rounded-lg px-4 py-3 border border-gray-300"
-            >
-              <div className="flex items-center justify-center">
-                <i className="fa-brands fa-google"></i>
-                <span className="ml-4">Register with Google</span>
-              </div>
-            </button>
           </div>
         </div>
       </section>

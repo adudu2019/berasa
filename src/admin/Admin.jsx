@@ -14,7 +14,10 @@ const Admin = () => {
   }, []);
 
   async function fetchProduct() {
-    const { data } = await supabase.from("product").select("*");
+    const { data } = await supabase
+      .from("product")
+      .select("*")
+      .eq("type_product", "Minuman");
     setProduct(data);
     setIsLoadig(false);
     console.log(data);
